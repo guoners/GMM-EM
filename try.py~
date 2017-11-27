@@ -1,0 +1,9 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+td = np.loadtxt('train.txt') #train-data
+(x1, y1) = td[0:2400,0:2].T
+(x2, y2) = td[2400:4801,0:2].T
+plt.scatter(x1, y1, s=2)
+plt.scatter(x2, y2, s=2)
+plt.show()

@@ -1,0 +1,14 @@
+#train_beta.py
+#try to train Gauss Mixtured Model with EM algorithm
+#Nur3e
+#initialize 17.11.23
+import numpy as np
+import matplotlib.pyplot as plt
+
+#initialize
+
+
+#iteration
+
+
+
