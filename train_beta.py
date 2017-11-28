@@ -16,15 +16,51 @@ K = 0
 
 #import data
 trainDataOrig = np.loadtxt('train.txt')			#4800,3			n,3
-trainData = trainDataOrig[0:4800,0:2]	 		#4800,2			n,2
+trainData = trainDataOrig[:,0:2]	 			#4800,2			n,2
 N = trainData.shape[0]
 
 #pic_data()
 
 #initialize
-mu = np.random.rand(M, 2)*(5.5, 5)-(1.5,2)				#mu/mean 		m, 2
-sigma = np.zeros([M, 2, 2])								#sigma/dev mat	m, 2,2
-pi = np.random.rand(M)									#pi				m
+
+# xmax = trainData[:,0].max()
+# xmen = trainData[:,0].mean()
+# xmin = trainData[:,0].min()
+
+# ymax = trainData[:,1].max()
+# ymen = trainData[:,1].mean()
+# ymin = trainData[:,1].min()
+
+
+##init-mu:rand()
+
+# scope = [xmax-xmin, ymax-ymin]
+# mu = np.random.rand(M, 2)*scope-(xmen, ymen)	#mu/mean 		m, 2
+
+##init-mu:set-stat-data
+# mu = np.zeros([M, 2])
+# mu[0] = [xmin, ymin]
+# mu[1] = [xmin, ymen]
+# mu[2] = [xmin, ymax]
+# mu[3] = [xmen, ymin]
+# mu[4] = [xmen, ymax]
+# mu[5] = [xmax, ymin]
+# mu[6] = [xmax, ymen]
+# mu[7] = [xmax, ymax]
+
+##init-mu:set-manual
+# mu = np.zeros([M, 2])
+# mu[0] = [1, -1]
+# mu[1] = [-.5, 0]
+# mu[2] = [.5, .5]
+# mu[3] = [1.5, 0]
+# mu[4] = [.8, 1.5]
+# mu[5] = [2.5, 1]
+# mu[6] = [3, 0]
+# mu[7] = [2, 2]
+
+sigma = np.zeros([M, 2, 2])						#sigma/dev mat	m, 2,2
+pi = np.random.rand(M)							#pi				m
 piSum = pi.sum()
 #sigmaLine = np.random.rand(M, 2)
 for m in range(M):
@@ -32,7 +68,8 @@ for m in range(M):
 	sigma[m][0][1] = sigma[m].min()
 	sigma[m][1][0] = sigma[m][0][1]
 	pi[m] = pi[m]/piSum
-	print sigma[m]
+	#print sigma[m]
+	#print mu[m]
 
 K = 1
 deltaNow = np.ones(M)
@@ -46,7 +83,7 @@ upsilonSumN = np.zeros(M)						#upsilonM		n
 pic_mg(m, mu, sigma, trainData)
 
 #iteration 
-while (deltaNow>=1e-5).any():
+while (deltaNow>=1e-7).any():
 ##calc upsilon
 	print >> f, "in iteration #", K
 	print >> f, "mu:\n", mu
