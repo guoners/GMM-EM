@@ -23,19 +23,19 @@ N = trainData.shape[0]
 
 #initialize
 
-# xmax = trainData[:,0].max()
-# xmen = trainData[:,0].mean()
-# xmin = trainData[:,0].min()
+xmax = trainData[:,0].max()
+xmen = trainData[:,0].mean()
+xmin = trainData[:,0].min()
 
-# ymax = trainData[:,1].max()
-# ymen = trainData[:,1].mean()
-# ymin = trainData[:,1].min()
+ymax = trainData[:,1].max()
+ymen = trainData[:,1].mean()
+ymin = trainData[:,1].min()
 
 
-##init-mu:rand()
+#init-mu:rand()
 
-# scope = [xmax-xmin, ymax-ymin]
-# mu = np.random.rand(M, 2)*scope-(xmen, ymen)	#mu/mean 		m, 2
+scope = [xmax-xmin, ymax-ymin]
+mu = np.random.rand(M, 2)*scope-(xmen, ymen)	#mu/mean 		m, 2
 
 ##init-mu:set-stat-data
 # mu = np.zeros([M, 2])
@@ -49,15 +49,15 @@ N = trainData.shape[0]
 # mu[7] = [xmax, ymax]
 
 ##init-mu:set-manual
-# mu = np.zeros([M, 2])
-# mu[0] = [1, -1]
-# mu[1] = [-.5, 0]
-# mu[2] = [.5, .5]
-# mu[3] = [1.5, 0]
-# mu[4] = [.8, 1.5]
-# mu[5] = [2.5, 1]
-# mu[6] = [3, 0]
-# mu[7] = [2, 2]
+mu = np.zeros([M, 2])
+mu[0] = [1, -1]
+mu[1] = [-.5, 0]
+mu[2] = [.5, .5]
+mu[3] = [1.5, 0]
+mu[4] = [.8, 1.5]
+mu[5] = [2.5, 1]
+mu[6] = [3, 0]
+mu[7] = [2, 2]
 
 sigma = np.zeros([M, 2, 2])						#sigma/dev mat	m, 2,2
 pi = np.random.rand(M)							#pi				m
@@ -80,10 +80,10 @@ f = open('train_log.dat', 'w')
 upsilon = np.zeros([M, N])						#upsilonMN		m, n
 upsilonSumN = np.zeros(M)						#upsilonM		n
 
-pic_mg(m, mu, sigma, trainData)
+pic_mg(M, mu, sigma, trainDataOrig)
 
 #iteration 
-while (deltaNow>=1e-7).any():
+while (deltaNow>=1e-10).any():
 ##calc upsilon
 	print >> f, "in iteration #", K
 	print >> f, "mu:\n", mu
@@ -120,8 +120,8 @@ while (deltaNow>=1e-7).any():
 	K+=1
 	deltaNow = np.abs(mu - oldmu)
 	#print K, ' ',
-	if K%10 == 0:
-		pic_mg(m, mu, sigma, trainData)
+	if K%100 == 0:
+		pic_mg(m, mu, sigma, trainDataOrig)
 		print K
 print >> f, "sigma:\n", sigma
 print >> f, "mu:\n", mu
@@ -140,13 +140,13 @@ myN = np.zeros(N)	#dot: my Gauss Model Number
 
 for m in range(M):
 	sm = ss.multivariate_normal(mu[m], sigma[m])
-	SMR = sm.pdf(trainData)
+	SMR = sm.pdf(trainData)*pi[m]
 	for n in range(N):
 		if SMR[n] > myM[n]:
 			myN[n] = m
 			myM[n] = SMR[n]
 
-vote = np.zeros(8)
+vote = np.zeros(M)
 for n in range(N):
 	index = int(myN[n])
 	if trainDataOrig[n][2] == 1:
@@ -154,7 +154,7 @@ for n in range(N):
 	else:
 		vote[index] -= 1
 
-cate = np.zeros(8)
+cate = np.zeros(M)
 for m in range(M):
 	print >> f, "VOTE:", m, " ", vote[m]
 	if vote[m] > 0:

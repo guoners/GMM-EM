@@ -3,21 +3,29 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy.stats as ss
 import time
-
-M = 8
-
 # mu = np.loadtxt('mu.txt')
 # sigma = np.load('sigma.npy')
 # pi = np.loadtxt('pi.txt')
 # ca = np.loadtxt('cate.txt')
 
 #td = np.loadtxt('train.txt') #train-data
-def pic_data(td):
-	(x1, y1) = td[0:2400,0:2].T
-	(x2, y2) = td[2400:4801,0:2].T
+def pic_data(tdo, M):
+	td = tdo[:,0:2]
+	cnt = [0]*5
+	for n in range(tdo.shape[0]):
+		index = int(tdo[n,2])
+		cnt[index] += 1
+	cnt[2] += cnt[1]
+	cnt[3] += cnt[2]
+	cnt[4] += cnt[3]
+	(x1, y1) = td[cnt[0]:cnt[1],:].T
+	(x2, y2) = td[cnt[1]:cnt[2],:].T
+	(x3, y3) = td[cnt[2]:cnt[3],:].T
+	(x4, y4) = td[cnt[3]:cnt[4],:].T
 	plt.scatter(x1, y1, s=1.5)
 	plt.scatter(x2, y2, s=1.5)
-
+	plt.scatter(x3, y3, marker='x', s=15)
+	plt.scatter(x4, y4, marker='^', s=15)
 	#plt.show()
 	return
 
@@ -29,8 +37,8 @@ def pic_data(td):
 
 # Z = mg.pdf(X,Y)
 # plt.contour(X,Y,Z)
-def pic_mg(m, mu, sigma, td):
-	pic_data(td)
+def pic_mg(M, mu, sigma, td):
+	pic_data(td, M)
 	for m in range(M):
 		x, y = np.mgrid[-1.5:4:.01, -2:3:.01]
 		pos = np.empty(x.shape + (2,))

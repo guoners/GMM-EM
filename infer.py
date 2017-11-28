@@ -4,11 +4,12 @@
 
 import numpy as np
 import scipy.stats as ss
+from pic import pic_mg
 
 M = 8
 
 testDataOrig = np.loadtxt('dev.txt')
-testData = testDataOrig[:,0:2]
+testData = testDataOrig[:,[0,1]]
 testRef	= testDataOrig[:,2]
 N = testData.shape[0]
 
@@ -31,7 +32,7 @@ for m in range(M):
 	SMR[m] = pi[m]*sm.pdf(testData)
 	for n in range(N):
 		if iRstP[n] < SMR[m][n]:
-			print >> f, "C: in", m, " ", n, " ", SMR[m][n] 
+			#print >> f, "C: in", m, " ", n, " ", SMR[m][n] 
 			iRstP[n] = SMR[m][n]
 			iRst[n] = m
 
@@ -41,8 +42,16 @@ for n in range(N):
 
 cnt = np.zeros(1)
 for n in range(N):
-	print >> f, n, ' ', iRst[n]
+	#print >> f, n, ' ', iRst[n]
 	if iRst[n] == testRef[n]:
 		cnt+=1
+	else:
+		if (iRst[n] == 1):
+			testDataOrig[n,2] = 3	#2->1
+		else:
+			testDataOrig[n,2] = 4	#1->2
 
 print cnt/N
+f.close()
+testDataOrig = testDataOrig[testDataOrig[:,2].argsort()]
+pic_mg(M, mu, sigma, testDataOrig)
